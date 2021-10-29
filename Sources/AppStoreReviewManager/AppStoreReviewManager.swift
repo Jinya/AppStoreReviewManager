@@ -40,22 +40,31 @@ public struct AppStoreReviewManager {
     
     /// Request StoreKit to ask the user to rate or review your app, users will submit a rating through the standardized prompt, and can write and submit a review without leaving the app. You can prompt for ratings up to three times in a 365-day period.
     public static func requestReviewInApp() {
-        if #available(iOS 14.0, *) {
-            let keyWindow = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).flatMap { $0.windows }.first { $0.isKeyWindow }
-            guard let windowScene = keyWindow?.windowScene else {
-                assertionFailure("AppStoreReviewManager can't find key window of the app!")
-                return
+        let task = {
+            if #available(iOS 14.0, *) {
+                let keyWindow = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).flatMap { $0.windows }.first { $0.isKeyWindow }
+                guard let windowScene = keyWindow?.windowScene else {
+                    assertionFailure("AppStoreReviewManager can't find key window of the app!")
+                    return
+                }
+                SKStoreReviewController.requestReview(in: windowScene)
+            } else if #available(iOS 10.3, *) {
+                SKStoreReviewController.requestReview()
+            } else {
+                #if DEBUG
+                print("This operation is not supported on systems older than iOS 10.3")
+                #endif
             }
-            SKStoreReviewController.requestReview(in: windowScene)
-        } else if #available(iOS 10.3, *) {
-            SKStoreReviewController.requestReview()
+        }
+        
+        if Thread.isMainThread {
+            task()
         } else {
-            #if DEBUG
-            print("This operation is not supported on systems older than iOS 10.3")
-            #endif
+            DispatchQueue.main.async {
+                task()
+            }
         }
     }
-    
     
     /// To enable a user to initiate a review as a result of an action in the UI use a deep link to the App Store page for your app with the query parameter action=write-review appended to the URL.
     /// - Parameter id: the App Store ID for your app, you can find the App Store ID in your app's product URL

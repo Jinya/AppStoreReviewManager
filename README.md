@@ -10,11 +10,11 @@ iOS 9.0+, Swift 5.5
 
 ## Installation
 
-##### Swift Package Manager (Recommended)
+#### Swift Package Manager (Recommended)
 
 - File > Swift Packages > Add Package Dependency
 - Add `https://github.com/Jinya/AppStoreReviewManager.git`
-- Select "Exact Version"
+- Select "Exact Version" (recommend using the latest exact version)
 
 
 ## How to Use
@@ -23,7 +23,7 @@ iOS 9.0+, Swift 5.5
 import AppStoreReviewManager
 
 // Get App Store page url String for your app
-AppStoreReviewManager.appStorePageURLString(with: YOUR_APP_APP_STORE_ID)
+let urlString = AppStoreReviewManager.appStorePageURLString(with: YOUR_APP_APP_STORE_ID)
 
 // Open App Store page for your app
 AppStoreReviewManager.openAppStorePage(with: YOUR_APP_APP_STORE_ID)
