@@ -27,49 +27,61 @@
 import UIKit
 import StoreKit
 
+@available(iOS 9.0, *)
 public struct AppStoreReviewManager {
     
-    private static let baseURLString = "https://apps.apple.com/app/"
+    private static let baseURLString = "https://apps.apple.com/app"
     
-    /// Get the App Store page url string for your app
+    /// Get the App Store page url string for your app.
     /// - Parameter id: the App Store ID for your app, you can find the App Store ID in your app's product URL
     /// - Returns: the App Store page url string for your app
     public static func appStorePageURLString(with id: String) -> String {
-        return baseURLString + "id\(id)"
+        return baseURLString + "/id\(id)"
     }
     
-    /// Request StoreKit to ask the user to rate or review your app, users will submit a rating through the standardized prompt, and can write and submit a review without leaving the app. You can prompt for ratings up to three times in a 365-day period.
+    /// Request StoreKit to ask the user to rate or review your app, users will submit a rating through the standardized prompt, and can write and submit a review without leaving the app. You can prompt for ratings up to three times in a 365-day.
+    @available(iOS 10.3, *)
     public static func requestReviewInApp() {
-        let task = {
-            if #available(iOS 14.0, *) {
-                let keyWindow = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).flatMap { $0.windows }.first { $0.isKeyWindow }
-                guard let windowScene = keyWindow?.windowScene else {
-                    assertionFailure("AppStoreReviewManager can't find key window of the app!")
+        let block = {
+            if #available(iOS 15.0, *) {
+                guard let windowScene = UIApplication.shared.connectedScenes
+                    .filter({ $0.activationState == .foregroundActive })
+                    .compactMap({ $0 as? UIWindowScene })
+                    .first
+                else {
+                    assertionFailure("AppStoreReviewManager can't find a foreground active window scene of the app!")
                     return
                 }
                 SKStoreReviewController.requestReview(in: windowScene)
-            } else if #available(iOS 10.3, *) {
-                SKStoreReviewController.requestReview()
+            } else if #available(iOS 14.0, *) {
+                guard let windowScene = UIApplication.shared.connectedScenes
+                    .compactMap({ $0 as? UIWindowScene })
+                    .flatMap({ $0.windows })
+                    .first(where: { $0.isKeyWindow })?
+                    .windowScene
+                else {
+                    assertionFailure("AppStoreReviewManager can't find a key window of the app!")
+                    return
+                }
+                SKStoreReviewController.requestReview(in: windowScene)
             } else {
-                #if DEBUG
-                print("This operation is not supported on systems older than iOS 10.3")
-                #endif
+                SKStoreReviewController.requestReview()
             }
         }
         
         if Thread.isMainThread {
-            task()
+            block()
         } else {
             DispatchQueue.main.async {
-                task()
+                block()
             }
         }
     }
     
-    /// To enable a user to initiate a review as a result of an action in the UI use a deep link to the App Store page for your app with the query parameter action=write-review appended to the URL.
+    /// Initiate a write review form for a deep link to the App Store page for your app.
     /// - Parameter id: the App Store ID for your app, you can find the App Store ID in your app's product URL
     public static func requestReviewInAppStore(with id: String) {
-        let urlString = baseURLString + "id\(id)?action=write-review"
+        let urlString = appStorePageURLString(with: id) + "?action=write-review"
         guard let writeReviewURL = URL(string: urlString) else {
             assertionFailure("Expected a valid URL, \(urlString) is not a valid url string.")
             return
@@ -81,7 +93,7 @@ public struct AppStoreReviewManager {
         }
     }
     
-    /// Use a deep link to open the App Store page for your app.
+    /// Open a deep link to the App Store page for your app.
     /// - Parameter id: the App Store ID for your app, you can find the App Store ID in your app's product URL
     public static func openAppStorePage(with id: String) {
         let urlString = appStorePageURLString(with: id)

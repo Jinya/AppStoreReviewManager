@@ -12,7 +12,7 @@ iOS 9.0+, Swift 5.5
 
 #### Swift Package Manager (Recommended)
 
-- File > Swift Packages > Add Package Dependency
+- Xcode >  File > Swift Packages > Add Package Dependency
 - Add `https://github.com/Jinya/AppStoreReviewManager.git`
 - Select "Exact Version" (recommend using the latest exact version)
 
