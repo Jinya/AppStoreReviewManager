@@ -43,24 +43,11 @@ public struct AppStoreReviewManager {
     @available(iOS 10.3, *)
     public static func requestReviewInApp() {
         let block = {
-            if #available(iOS 15.0, *) {
+            if #available(iOS 14.0, *) {
                 guard let windowScene = UIApplication.shared.connectedScenes
-                    .filter({ $0.activationState == .foregroundActive })
-                    .compactMap({ $0 as? UIWindowScene })
-                    .first
+                    .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene
                 else {
-                    assertionFailure("AppStoreReviewManager can't find a foreground active window scene of the app!")
-                    return
-                }
-                SKStoreReviewController.requestReview(in: windowScene)
-            } else if #available(iOS 14.0, *) {
-                guard let windowScene = UIApplication.shared.connectedScenes
-                    .compactMap({ $0 as? UIWindowScene })
-                    .flatMap({ $0.windows })
-                    .first(where: { $0.isKeyWindow })?
-                    .windowScene
-                else {
-                    assertionFailure("AppStoreReviewManager can't find a key window of the app!")
+                    debugPrint("AppStoreReviewManager couldn't find a foreground active window scene to request review alert!")
                     return
                 }
                 SKStoreReviewController.requestReview(in: windowScene)
