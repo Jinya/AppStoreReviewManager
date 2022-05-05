@@ -5,7 +5,7 @@ An easy way to access reviews for your app instead of writing repetitive and red
 
 ## Requirements
 
-iOS 9.0+, Swift 5.5
+iOS 9.0+, Swift 5.5+
 
 
 ## Installation
@@ -22,17 +22,15 @@ iOS 9.0+, Swift 5.5
 ```swift
 import AppStoreReviewManager
 
-// Get App Store page url String for your app
-let urlString = AppStoreReviewManager.appStorePageURLString(with: YOUR_APP_APP_STORE_ID)
+// Get the App Store product page URL with a given App Store ID.
+let productURL = AppStoreReviewManager.productURL(with: YOUR_PRODUCT_APP_STORE_ID)!
 
-// Open App Store page for your app
-AppStoreReviewManager.openAppStorePage(with: YOUR_APP_APP_STORE_ID)
+// Tells StoreKit to ask the user to rate or review your app, if appropriate.
+// This is a convenient wrapper method for `SKStoreReviewController.requestReview()` and `SKStoreReviewController.requestReview(in:)`.
+AppStoreReviewManager.requestReview()
 
-// Request review without leaving your app
-AppStoreReviewManager.requestReviewInApp()
-
-// Open App Store review page for your app to review
-AppStoreReviewManager.requestReviewInAppStore(with: YOUR_APP_APP_STORE_ID)
+// Open the App Store product page and present a write review form in the App Store.
+AppStoreReviewManager.openProductPageForReview(with: YOUR_PRODUCT_APP_STORE_ID)
 ```
 
 
