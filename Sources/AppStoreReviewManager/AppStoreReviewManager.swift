@@ -8,7 +8,7 @@ import UIKit
 import StoreKit
 
 @available(iOS 9.0, *)
-public struct AppStoreReviewManager {
+public enum AppStoreReviewManager {
     /// Base URL string
     private static let base = "https://apps.apple.com/app"
 
@@ -29,7 +29,7 @@ public struct AppStoreReviewManager {
     /// This is a convenient wrapper method for `SKStoreReviewController.requestReview()` and `SKStoreReviewController.requestReview(in: UIWindowScene)`.
     @available(iOS 10.3, *)
     public static func requestReview() {
-        let block = {
+        func run() {
             if #available(iOS 14.0, *) {
                 guard let windowScene = UIApplication.shared.connectedScenes
                     .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene
@@ -44,11 +44,9 @@ public struct AppStoreReviewManager {
         }
         
         if Thread.isMainThread {
-            block()
+            run()
         } else {
-            DispatchQueue.main.async {
-                block()
-            }
+            DispatchQueue.main.async { run() }
         }
     }
     

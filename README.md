@@ -5,7 +5,7 @@ An easy way to access reviews for your app instead of writing repetitive and red
 
 ## Requirements
 
-iOS 9.0+, Swift 5.5+
+iOS 11.0+, Swift 5.7+
 
 
 ## Installation
@@ -14,7 +14,7 @@ iOS 9.0+, Swift 5.5+
 
 - Xcode >  File > Swift Packages > Add Package Dependency
 - Add `https://github.com/Jinya/AppStoreReviewManager.git`
-- Select "Exact Version" (recommend using the latest exact version)
+- Select "Up to Next Minor" (recommend using the latest version)
 
 
 ## How to Use
